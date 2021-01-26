@@ -110,7 +110,7 @@ jobs:
           sudo a2enmod proxy && sudo a2enmod proxy_http
 
           # Install Java Runtime
-          sudo apt install default-jre
+          sudo apt install default-jre -y
 
   build:
 
