@@ -314,3 +314,11 @@ az network dns record-set a remove-record --ipv4-address * \
   --resource-group group-project1 \
   --zone-name demo.example.com
 ```
+
+### Service Principal
+
+- Create password-based authentication
+```
+az ad sp create-for-rbac --name "simple-web-api-sp" --sdk-auth --role contributor \
+    --scopes /subscriptions/{subscription-id}/resourceGroups/{resource-group}
+```
