@@ -78,8 +78,8 @@ jobs:
     needs: [setup-web-server]
 
     steps:
-    - uses: matheusvanzan/sshpass-action@v2
     - name: Provision Server
+      uses: matheusvanzan/sshpass-action@v2
       with:
         host: ${{ secrets.HOSTNAME }}
         user: ${{ secrets.AZURE_USER }}
