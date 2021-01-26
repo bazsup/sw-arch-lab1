@@ -25,6 +25,7 @@ jobs:
   build:
 
     needs: [setup-web-server]
+    if: always()
     runs-on: ubuntu-latest
 
     steps:
