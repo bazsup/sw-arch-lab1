@@ -178,3 +178,134 @@ Kill process
 ```
 kill <pid>
 ```
+
+
+
+## Azure Cli
+
+pre-required
+- azure cli 👉 https://docs.microsoft.com/en-us/cli/azure/install-azure-cli
+
+- Login
+```
+az login
+```
+
+### Resource group
+
+- List resource group
+```
+az group list
+```
+
+- Create
+```
+az group create --location group-project1
+  --name
+```
+
+- Delete
+```
+az group wait --name group-project1 --deleted
+```
+### Virtual Machine Image
+
+- Search image
+```
+az vm image list -p canonical -o table --all | grep 20_04-lts
+```
+> reference: https://github.com/Azure/azure-cli/issues/13320#issuecomment-649867249
+
+Then copy `urn` you prefer.
+For example `Canonical:0001-com-ubuntu-server-focal:20_04-lts-gen2:20.04.202101191`
+
+### Disk
+
+- List disks
+```
+az disk list
+```
+
+- Create
+```
+az disk create --name lab1_DataDisk_0 \
+  --resource-group group-project1 \
+  --size-gb 8
+```
+
+### Virtual Machine
+
+- List size
+```
+az vm list-sizes -l southeastasia
+```
+
+- Create
+```
+az vm create --resource-group group-project1 \
+  --name lab1 \
+  --image "Canonical:0001-com-ubuntu-server-focal:20_04-lts-gen2:20.04.202101191" \
+  --authentication-type password \
+  --admin-username azureuser \
+  --admin-password SecurePassw0rd \
+  --attach-data-disks lab1_DataDisk_0 \
+  --size Standard_B1s \
+  --output json \
+  --verbose
+```
+
+### Domain Name Server (DNS)
+
+- List
+```
+az network dns zone list
+```
+
+- Show detail
+```
+az network dns zone show --name demo.example.com \
+  --resource-group group-project1
+```
+- List records
+```
+az network dns record-set a list --resource-group group-project1 \
+  --zone-name demo.example.com
+```
+
+- Create record-set
+```
+az network dns record-set a create --name @ \
+  --resource-group group-project1 \
+  --zone-name demo.example.com
+```
+
+- Show record-set
+```
+az network dns record-set a show --name @ \
+  --resource-group group-project1 \
+  --zone-name demo.example.com
+```
+
+- Delete record-set
+```
+az network dns record-set a delete --name @ \
+  --resource-group group-project1 \
+  --zone-name demo.example.com
+```
+
+- Add record
+```
+az network dns record-set a add-record --ipv4-address 192.168.1.11 \
+  --record-set-name @ \
+  --resource-group group-project1 \
+  --zone-name demo.example.com \
+  --ttl 300
+```
+
+- Remove record
+```
+az network dns record-set a remove-record --ipv4-address * \
+  --record-set-name @ \
+  --resource-group group-project1 \
+  --zone-name demo.example.com
+```
