@@ -108,9 +108,9 @@ jobs:
           sudo mv host.conf /etc/apache2/sites-enabled/${{ secrets.HOSTNAME }}.conf
 
           sudo a2enmod proxy && sudo a2enmod proxy_http
-          
-          # Reload apache config
-          sudo /etc/init.d/apache2 reload
+
+          # Install Java Runtime
+          sudo apt install default-jre
 
   build:
 
@@ -140,4 +140,9 @@ jobs:
         host: ${{ secrets.HOSTNAME }}
         username: ${{ secrets.AZURE_USER }}
         key: ${{ secrets.PRIVATE_KEY }}
-        script: java -jar simple-web-api.jar &
+        script: |
+          # Start application
+          (java -jar simple-web-api.jar &)
+
+          # Reload apache config
+          sudo /etc/init.d/apache2 reload
