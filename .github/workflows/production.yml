@@ -95,7 +95,7 @@ jobs:
           sudo ufw allow 'Apache'
           
           # Reverse proxy to applicatio port
-          echo "<VirtualHost *:80>" >> host.conf
+          echo "<VirtualHost *:80>" > host.conf
           echo "  ProxyPreserveHost On" >> host.conf
           echo "  ProxyRequests Off" >> host.conf
           echo "  ServerName ${{ secrets.HOSTNAME }}" >> host.conf
@@ -103,7 +103,7 @@ jobs:
           echo "  ProxyPass / http://localhost:8080/" >> host.conf
           echo "  ProxyPassReverse / http://localhost:8080/" >> host.conf
           echo "</VirtualHost>" >> host.conf
-          sudo -v mv host.conf /etc/apache2/sites-enabled/${{ secrets.HOSTNAME }}.conf
+          sudo mv host.conf /etc/apache2/sites-enabled/${{ secrets.HOSTNAME }}.conf
 
           sudo a2enmod proxy && sudo a2enmod proxy_http
           
@@ -131,14 +131,12 @@ jobs:
         mkdir -p ~/.ssh/
         mv -v config ~/.ssh/
         sudo chmod 400 ~/.ssh/config
+    - name: Install sshpass
+      run: |
+        sudo apt install install sshpass -y
     - name: Copy file via ssh password
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.HOSTNAME }}
-        username: ${{ secrets.AZURE_USERNAME }}
-        password: ${{ secrets.AZURE_PASSWORD }}
-        source: "target/simple-web-api-0.0.1-SNAPSHOT.jar"
-        target: "simple-web-api.jar"
+      run: |
+        sshpass -p ${{ secrets.AZURE_PASSWORD }} scp "target/simple-web-api-0.0.1-SNAPSHOT.jar" ${{ secrets.AZURE_USERNAME }}@${{ secrets.HOSTNAME }}:simple-web-api.jar
     - name: Run application
       uses: matheusvanzan/sshpass-action@v2
       with:
