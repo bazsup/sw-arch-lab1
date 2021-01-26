@@ -36,6 +36,7 @@ jobs:
           --size-gb 8
     - name: Create VM
       run: |
+        echo ${{ secrets.PUBLIC_KEY }} > app.pub
         az vm create --resource-group $RESOURCE_GROUP \
           --name $VM_NAME \
           --image $VM_IMAGE \
@@ -45,7 +46,7 @@ jobs:
           --attach-data-disks $DISK_NAME \
           --size $VM_SIZE \
           --output none \
-          --ssh-key-values ${{ secrets.PUBLIC_KEY }} \
+          --ssh-key-values app.pub \
           --verbose
     - name: Allow https
       run: |
