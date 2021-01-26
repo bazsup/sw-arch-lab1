@@ -133,7 +133,7 @@ jobs:
         username: ${{ secrets.AZURE_USER }}
         password: ${{ secrets.AZURE_PASSWORD }}
         source: "target/simple-web-api-0.0.1-SNAPSHOT.jar"
-        target: "simple-web-api.jar"
+        target: "."
     - name: Run application
       uses: appleboy/ssh-action@master
       with:
@@ -141,8 +141,11 @@ jobs:
         username: ${{ secrets.AZURE_USER }}
         key: ${{ secrets.PRIVATE_KEY }}
         script: |
-          # Start application
-          (java -jar simple-web-api.jar &)
+          # Rename
+          mv target/*.jar simple-web-api.jar
+
+          # Start application on background process
+          java -jar simple-web-api.jar &
 
           # Reload apache config
           sudo /etc/init.d/apache2 reload
