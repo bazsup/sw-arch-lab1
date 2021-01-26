@@ -48,28 +48,24 @@ jobs:
           --verbose
     - name: Get public ip
       run: |
-        IP=$(az vm show -d -g $RESOURCE_GROUP -n lab1 --query publicIps -o tsv)
-    - name: Echo IP
+        IP=$(az vm show -d -g $RESOURCE_GROUP -n $VM_NAME --query publicIps -o tsv)
+        echo "::set-env name=IP::$IP"
+    - name: Delete DNS record set
       run: |
+        az network dns record-set a delete --name @ \
+          --resource-group $RESOURCE_GROUP \
+          --zone-name ${{ secrets.HOSTNAME }} -y
         echo $IP
-
-  demo-vars:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Set env
+    - name: Create a new DNS record
       run: |
-        TEMP=1234
-        echo "1:value in set env ${TEMP:-noenv}"
-    - name: Access env between step 1
-      run: |
-        echo "2:value in set env ${TEMP:-noenv}"
-    - name: Set env export
-      run: |
-        export TEMP=1234
-        echo "3:value in set env ${TEMP:-noenv}"
-    - name: Access env between step 2
-      run: |
-        echo "4:value in set env ${TEMP:-noenv}"
+        az network dns record-set a create --name @ \
+          --resource-group $RESOURCE_GROUP \
+          --zone-name ${{ secrets.HOSTNAME }} -o none
+        az network dns record-set a add-record --ipv4-address $IP \
+          --record-set-name @ \
+          --resource-group $RESOURCE_GROUP \
+          --zone-name ${{ secrets.HOSTNAME }} \
+          --ttl 300 -o none
 
   build:
 
