@@ -48,7 +48,7 @@ jobs:
           --output none \
           --ssh-key-values app.pub \
           --verbose
-    - name: Allow https
+    - name: Allow http
       run: |
         az network nsg rule create \
           --resource-group group-project1 \
@@ -85,7 +85,7 @@ jobs:
       with:
         host: ${{ secrets.HOSTNAME }}
         ususernameer: ${{ secrets.AZURE_USER }}
-        key: ${{ secrets.KEY }}
+        key: ${{ secrets.PRIVATE_KEY }}
         run: |
           # Firewall Configuration
           sudo ufw allow ssh
@@ -135,10 +135,9 @@ jobs:
         source: "target/simple-web-api-0.0.1-SNAPSHOT.jar"
         target: "simple-web-api.jar"
     - name: Run application
-      uses: matheusvanzan/sshpass-action@v2
+      uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOSTNAME }}
-        user: ${{ secrets.AZURE_USER }}
-        pass: ${{ secrets.AZURE_PASSWORD }}
-        run: |
-          java -jar simple-web-api.jar &
+        ususernameer: ${{ secrets.AZURE_USER }}
+        key: ${{ secrets.PRIVATE_KEY }}
+        run: java -jar simple-web-api.jar &
