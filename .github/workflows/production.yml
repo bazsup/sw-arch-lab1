@@ -84,7 +84,7 @@ jobs:
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOSTNAME }}
-        ususernameer: ${{ secrets.AZURE_USER }}
+        username: ${{ secrets.AZURE_USER }}
         key: ${{ secrets.PRIVATE_KEY }}
         run: |
           # Firewall Configuration
@@ -138,6 +138,6 @@ jobs:
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOSTNAME }}
-        ususernameer: ${{ secrets.AZURE_USER }}
+        username: ${{ secrets.AZURE_USER }}
         key: ${{ secrets.PRIVATE_KEY }}
         run: java -jar simple-web-api.jar &
