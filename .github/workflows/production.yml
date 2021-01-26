@@ -124,7 +124,7 @@ jobs:
         java-version: 11
     - name: Build with Maven
       run: mvn -B package --file pom.xml
-    - name: Dis ssh host key checking
+    - name: Disable ssh host key checking
       run: |
         echo "Host *" >> config
         echo "    StrictHostKeyChecking no" >> config
@@ -133,7 +133,7 @@ jobs:
         sudo chmod 400 ~/.ssh/config
     - name: Copy file via ssh password
       run: |
-        sudo cat ~/.ssh/known_hosts
+        sudo cat ~/.ssh/config
         sudo sshpass -p ${{ secrets.AZURE_PASSWORD }} scp "target/simple-web-api-0.0.1-SNAPSHOT.jar" "${{ secrets.AZURE_USERNAME }}@${{ secrets.HOSTNAME }}:simple-web-api.jar"
     - name: Run application
       uses: matheusvanzan/sshpass-action@v2
