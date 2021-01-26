@@ -14,13 +14,44 @@ jobs:
     if: "contains(github.event.head_commit.message, 'build-server')"
     runs-on: ubuntu-latest
 
+    env:
+      RESOURCE_GROUP: group-project1
+      DISK_NAME: lab1_DataDisk_0
+      VM_SIZE: Standard_B1s
+      VM_NAME: lab1
+      VM_IMAGE: Canonical:0001-com-ubuntu-server-focal:20_04-lts-gen2:20.04.202101191
+
     steps:
     - uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - name: Check resource group
+    - name: Clear resource
       run: |
-        az group list
+        az vm delete -g $RESOURCE_GROUP -n $VM_NAME -y
+        az disk delete --name $DISK_NAME --resource-group $RESOURCE_GROUP -y
+    - name: Create disk
+      run: |
+        az disk create --name $DISK_NAME \
+          --resource-group $RESOURCE_GROUP \
+          --size-gb 8
+    - name: Create VM
+      run: |
+        az vm create --resource-group $RESOURCE_GROUP \
+          --name $VM_NAME \
+          --image $VM_IMAGE \
+          --authentication-type password \
+          --admin-username ${{ secrets.AZURE_USER }} \
+          --admin-password ${{ secrets.AZURE_PASSWORD }} \
+          --attach-data-disks $DISK_NAME \
+          --size $VM_SIZE \
+          --output none \
+          --verbose
+    - name: Get public ip
+      run: |
+        IP=$(az vm show -d -g $RESOURCE_GROUP -n lab1 --query publicIps -o tsv)
+    - name: Echo IP
+      run: |
+        echo $IP
 
   build:
 
