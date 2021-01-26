@@ -144,6 +144,9 @@ jobs:
           # Rename
           mv target/*.jar simple-web-api.jar
 
+          # Kill old process
+          kill $(pidof java)
+
           # Start application on background process
           java -jar simple-web-api.jar &
 
