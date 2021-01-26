@@ -254,6 +254,11 @@ az vm create --resource-group group-project1 \
   --verbose
 ```
 
+- Show public ip
+```
+az vm show -d -g group-project1 -n lab1 --query publicIps -o tsv
+```
+
 ### Domain Name Server (DNS)
 
 - List
