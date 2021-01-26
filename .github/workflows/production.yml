@@ -53,6 +53,24 @@ jobs:
       run: |
         echo $IP
 
+  demo-vars:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set env
+      run: |
+        TEMP=1234
+        echo "1:value in set env ${TEMP:-noenv}"
+    - name: Access env between step 1
+      run: |
+        echo "2:value in set env ${TEMP:-noenv}"
+    - name: Set env export
+      run: |
+        export TEMP=1234
+        echo "3:value in set env ${TEMP:-noenv}"
+    - name: Access env between step 2
+      run: |
+        echo "4:value in set env ${TEMP:-noenv}"
+
   build:
 
     needs: [setup-web-server]
