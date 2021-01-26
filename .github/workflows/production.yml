@@ -95,16 +95,16 @@ jobs:
           sudo ufw allow 'Apache'
           
           # Reverse proxy to applicatio port
-          sudo echo "
-          <VirtualHost *:80>
-            ProxyPreserveHost On
-            ProxyRequests Off
-            ServerName ${{ secrets.HOSTNAME }}
-            ServerAlias ${{ secrets.HOSTNAME }}
-            ProxyPass / http://localhost:8080/
-            ProxyPassReverse / http://localhost:8080/
-          </VirtualHost>
-          " > /etc/apache2/sites-enabled/${{ secrets.HOSTNAME }}.conf
+          echo "<VirtualHost *:80>" >> host.conf
+          echo "  ProxyPreserveHost On" >> host.conf
+          echo "  ProxyRequests Off" >> host.conf
+          echo "  ServerName ${{ secrets.HOSTNAME }}" >> host.conf
+          echo "  ServerAlias ${{ secrets.HOSTNAME }}" >> host.conf
+          echo "  ProxyPass / http://localhost:8080/" >> host.conf
+          echo "  ProxyPassReverse / http://localhost:8080/" >> host.conf
+          echo "</VirtualHost>" >> host.conf
+          sudo -v mv host.conf /etc/apache2/sites-enabled/${{ secrets.HOSTNAME }}.conf
+
           sudo a2enmod proxy && sudo a2enmod proxy_http
           
           # Reload apache config
@@ -124,14 +124,21 @@ jobs:
         java-version: 11
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+    - name: Dis ssh host key checking
+      run: |
+        echo "Host *" >> config
+        echo "    StrictHostKeyChecking no" >> config
+        mkdir -p ~/.ssh/
+        mv -v config ~/.ssh/
+        sudo chmod 400 ~/.ssh/config
     - name: Copy file via ssh password
-      uses: garygrossgarten/github-action-scp@release
+      uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.HOSTNAME }}
         username: ${{ secrets.AZURE_USERNAME }}
         password: ${{ secrets.AZURE_PASSWORD }}
-        local: "target/simple-web-api-0.0.1-SNAPSHOT.jar"
-        remote: "simple-web-api.jar"
+        source: "target/simple-web-api-0.0.1-SNAPSHOT.jar"
+        target: "simple-web-api.jar"
     - name: Run application
       uses: matheusvanzan/sshpass-action@v2
       with:
