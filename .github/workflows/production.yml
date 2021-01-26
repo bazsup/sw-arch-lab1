@@ -86,7 +86,7 @@ jobs:
         host: ${{ secrets.HOSTNAME }}
         username: ${{ secrets.AZURE_USER }}
         key: ${{ secrets.PRIVATE_KEY }}
-        run: |
+        script: |
           # Firewall Configuration
           sudo ufw allow ssh
           sudo ufw enable
@@ -140,4 +140,4 @@ jobs:
         host: ${{ secrets.HOSTNAME }}
         username: ${{ secrets.AZURE_USER }}
         key: ${{ secrets.PRIVATE_KEY }}
-        run: java -jar simple-web-api.jar &
+        script: java -jar simple-web-api.jar &
