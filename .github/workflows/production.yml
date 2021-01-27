@@ -140,6 +140,7 @@ jobs:
         host: ${{ secrets.HOSTNAME }}
         username: ${{ secrets.AZURE_USER }}
         key: ${{ secrets.PRIVATE_KEY }}
+        command_timeout: 1m
         script: |
           # Rename
           mv target/*.jar simple-web-api.jar
@@ -148,7 +149,7 @@ jobs:
           kill $(pidof java)
 
           # Start application on background process
-          java -jar simple-web-api.jar &
+          java -jar simple-web-api.jar > app.log 2>&1 </dev/null &
 
           # Reload apache config
           sudo /etc/init.d/apache2 reload
