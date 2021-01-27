@@ -1,5 +1,7 @@
 # Simple web api
 
+![Java CI with Maven](https://github.com/bazsup/sw-arch-lab1/workflows/Java%20CI%20with%20Maven/badge.svg)
+
 #### Table of contents
 - [Build Application Guideline](#build-application-guideline)
 - [Deployment Guideline](#deployment-guideline)
