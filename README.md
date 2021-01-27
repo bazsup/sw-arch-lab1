@@ -295,7 +295,7 @@ az network dns record-set a show --name @ \
 ```
 az network dns record-set a delete --name @ \
   --resource-group group-project1 \
-  --zone-name demo.example.com
+  --zone-name demo.example.com -y
 ```
 
 - Add record
@@ -304,7 +304,7 @@ az network dns record-set a add-record --ipv4-address 192.168.1.11 \
   --record-set-name @ \
   --resource-group group-project1 \
   --zone-name demo.example.com \
-  --ttl 300
+  --ttl 300 -o none
 ```
 
 - Remove record
@@ -313,6 +313,24 @@ az network dns record-set a remove-record --ipv4-address * \
   --record-set-name @ \
   --resource-group group-project1 \
   --zone-name demo.example.com
+```
+
+### Network Security Group
+
+- List rule
+```
+az network nsg rule list --nsg-name lab1NSG --resource-group group-project1
+```
+
+Create rule
+```
+az network nsg rule create \
+  --resource-group group-project1 \
+  --nsg-name lab1NSG \
+  --name http \
+  --protocol tcp \
+  --priority 1010 \
+  --destination-port-range 80
 ```
 
 ### Service Principal
