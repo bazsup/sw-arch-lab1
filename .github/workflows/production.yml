@@ -89,7 +89,7 @@ jobs:
         script: |
           # Firewall Configuration
           sudo ufw allow ssh
-          sudo ufw enable
+          echo "y" | sudo ufw enable
           
           # Setup Apache Server
           sudo apt update -y
