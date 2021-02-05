@@ -23,7 +23,7 @@ public class MessageController {
         return new ResponseEntity<>(responseMsg, HttpStatus.CREATED);
     }
 
-    @GetMapping("/message")
+    @GetMapping("/messages")
     public ResponseEntity<Map> getPostedMessages() {
         List<MessageCount> messagesCount = messageService.getMessagesCount();
         Map<String, Object> responseMessageCount = new HashMap<>();
