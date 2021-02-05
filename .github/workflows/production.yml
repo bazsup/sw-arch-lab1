@@ -171,5 +171,5 @@ jobs:
           sudo systemctl daemon-reload
 
           # start application service
-          sudo systemctl start simple-web-api
+          sudo systemctl restart simple-web-api
           sudo systemctl enable simple-web-api
