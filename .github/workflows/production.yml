@@ -97,20 +97,25 @@ jobs:
           sudo ufw allow 'Apache'
           
           # Reverse proxy to applicatio port
-          echo "<VirtualHost *:80>" > host.conf
-          echo "  ProxyPreserveHost On" >> host.conf
-          echo "  ProxyRequests Off" >> host.conf
-          echo "  ServerName ${{ secrets.HOSTNAME }}" >> host.conf
-          echo "  ServerAlias ${{ secrets.HOSTNAME }}" >> host.conf
-          echo "  ProxyPass / http://localhost:8080/" >> host.conf
-          echo "  ProxyPassReverse / http://localhost:8080/" >> host.conf
-          echo "</VirtualHost>" >> host.conf
+          cat > host.conf << EOF
+          <VirtualHost *:80>
+            ProxyPreserveHost On
+            ProxyRequests Off
+            ServerName ${{ secrets.HOSTNAME }}
+            ServerAlias ${{ secrets.HOSTNAME }}
+            ProxyPass / http://localhost:8080/
+            ProxyPassReverse / http://localhost:8080/
+          </VirtualHost>
+          EOF
           sudo mv host.conf /etc/apache2/sites-enabled/${{ secrets.HOSTNAME }}.conf
 
           sudo a2enmod proxy && sudo a2enmod proxy_http
 
           # Install Java Runtime
           sudo apt install default-jre -y
+
+          # Reload apache config
+          sudo /etc/init.d/apache2 reload
 
   build:
 
@@ -145,11 +150,26 @@ jobs:
           # Rename
           mv target/*.jar simple-web-api.jar
 
-          # Kill old process
-          kill $(pidof java)
+          # Create application service
+          cat > simple-web-api.service << EOF
+          [Unit]
+          Description=My simple web api
+          After=network.target
 
-          # Start application on background process
-          java -jar simple-web-api.jar > app.log 2>&1 </dev/null &
+          [Service]
+          ExecStart=$(which java) -jar ${HOME}/simple-web-api.jar
+          Type=simple
+          User=${{ secrets.AZURE_USER }}
 
-          # Reload apache config
-          sudo /etc/init.d/apache2 reload
+          [Install]
+          WantedBy=multi-user.target
+          Restart=on-failure
+          EOF
+          mv simple-web-api.service /lib/systemd/system/
+
+          # Reload
+          sudo systemctl daemon-reload
+
+          # start application service
+          sudo systemctl start simple-web-api
+          sudo systemctl enable simple-web-api
