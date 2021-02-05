@@ -165,7 +165,7 @@ jobs:
           WantedBy=multi-user.target
           Restart=on-failure
           EOF
-          mv simple-web-api.service /lib/systemd/system/
+          sudo mv simple-web-api.service /lib/systemd/system/
 
           # Reload
           sudo systemctl daemon-reload
