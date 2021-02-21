@@ -1,0 +1,26 @@
+---
+- name: Provision Web Firewall
+  gather_facts: false
+  hosts: web2
+  become: true # use command with root
+  tasks:
+    - name: Update package
+      apt:
+        update_cache: yes
+    - name: Allow ssh
+      ufw:
+        rule: allow
+        name: ssh
+    - name: enable firewall
+      ufw:
+        state: enabled
+    - name: Install apache
+      apt:
+        name: apache2
+        state: present
+
+    - name: Copy apache config
+      copy:
+        src: /
+
+
